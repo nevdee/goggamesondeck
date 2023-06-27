@@ -1,0 +1,32 @@
+
+
+
+This is for people that want to manually install GOG games instead of using Heroic or Lutris:
+
+I would recommend using Steam for this, instead of standalone Wine. 
+
+Proton gives every game its own dedicated virtual C Drive, even Non-Steam games. 
+
+This means each game is sandboxed and can be messed with, without affecting other game installs. If you just use standard Wine, everything goes on a single virtual C Drive, like Windows.
+
+Prerequisites: Steam, Winetricks, Protontricks, GOG game installer, Dev Mode Enabled (for Steam Deck). Winetricks and Protontricks are two programs you will need for this to work. If possible, I would recommend the terminal versions of the apps (with GUI) rather than the Flatpak versions. Terminal versions, you can see what's going on in the terminal. Flatpak will just disappear, with no indication that it's working in the background. If you go Flatpak, open up your distro's task manager and look for the "wineserver" task. That will be Winetricks/Protontricks still being active.
+
+Step 1: Add your game's Setup.exe as a Non-Steam game. Rename it to the game's name. Go to the Compatibility tab and choose a Proton version to install with. Proton can't detect any drive other than the internal, by default. If installing to anything but your internal drive (like a microSD), add the launch option under Properties: STEAM_COMPAT_MOUNTS="path/to/drive/you/want" %command%
+
+Step 2: Launch the Setup.exe and install the game to where you want it. During the install, pay attention to if the game installs anything else (like DirectX).
+
+Step 3: Once it's installed, DO NOT make a new Non-Steam game for the game's .exe. Instead, open Properties for the Setup.exe Non-Steam game, and change both the Target and Start In locations to where your game's .exe is installed. They'll both be the exact same path, but Target will have the .exe added at the end. Ex: Start In: "/home/yourname/Games/Witcher/" Target: "/home/yourname/Games/Wicther/Wicther.exe"
+
+Step 4: Skip this step if the game's installer already installed BOTH DirectX and Visual C++ Runtime. You will need to go back to this step for optional stuff later. Launch the game at least once with the Proton version you want to play the game with. After that, close out the game and open Protontricks. Protontricks will list all of your virtual C Drives for each game, even Non-Steam games. Choose the game you just installed from the list. Ignore the 64-bit Wine Prefix warnings (that's normal). Select the default Wine Prefix. After that, choose Install a Windows DLL or Component. To install DirectX, choose either d3dx10 (DirectX 10) or d3dx9 (DirectX 9). For Visual C++, choose vcrun2019. Press Okay, and they should begin installing. Visual C++ will probably give you a couple of errors, but as long as it brings up the runtime installer twice, then it's fine. If you're taken back to the previous menu in Protontricks, then it worked. You can hit Cancel to close out Protontricks. Your game is now ready to play.
+
+If there are still issues with your game, check its compatibility on ProtonDB. There may be other components you need to install with Protontricks.
+
+Optional: What if you want your game on a portable drive or microSD that you can take from PC to PC? Not an issue. Open Protontricks and make a note of the random string of numbers that your game's C Drive is called. Navigate to .steam/debian-installation/steamapps/compatdata/ to find all the virtual C Drives. Find your game's folder and copy it to the USB or microSD your game is installed to. Again, make a note of the string of numbers. On your USB/SD, rename it to whatever you want (preferably the game name). Now delete the one from Steam's compatdata folder. We're going to create a shortcut link (symlink) to the one on your USB/SD. Have two windows open. Hold Ctrl+Shift, then drag and drop your C Drive from your USB/SD to the compatdata folder. Now rename it to the original string of numbers. Steam will still find its original string, and link it to the one on your USB/SD. You don't need to reinstall the game ever again.
+
+On a new host PC, launch the game's .exe at least once, so Steam can create its random string of numbers. Locate the folder, delete it, symlink the one from your USB/SD, and rename it to the string of numbers for that host PC. Game will then launch normally. You don't need to rename the one on your USB/SD, just the one in the compatdata folder.
+
+This method takes a bit of work, compared to just using Lutris or Heroic, but is worth it for the portability aspect.
+
+For anyone else reading this, this method can work with "acquired" Steam games, but is very hit or miss. Even if it's a game that works perfectly on Steam, its "acquired" counterpart may not work.
+
+To Uninstall: Change the target path from the game's .exe to the uninstaller's. You'll also have to manually delete the compatdata folder if you want that gone as well.
